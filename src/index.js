@@ -4,6 +4,7 @@ const app = express();
 
 const { PORT } = require('./config/server-config');
 const apiRoutes = require('./routes/index');
+const UserService = require('./services/user-service');
 
 const createServer = () => {
 
