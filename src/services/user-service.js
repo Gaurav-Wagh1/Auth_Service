@@ -38,7 +38,28 @@ class UserService {
             return newJWT;
 
         } catch (error) {
-            console.log("Something went wrong in sign in process;");
+            console.log("Something went wrong in sign-in process;");
+            throw error;
+        }
+    }
+
+    async isAuthenticated(token) {
+        try {
+            const isTokenValidated = this.#verifyToken(token);
+
+            if (!isTokenValidated) {
+                throw { error: "Token is not valid" };
+            }
+
+            const user = await this.userRepository.getById(isTokenValidated.id);
+
+            if (!user) {
+                throw { error: "User is not there in the database !" };
+            }
+
+            return user.id;
+        } catch (error) {
+            console.log("Something went wrong in authentication process;");
             throw error;
         }
     }
