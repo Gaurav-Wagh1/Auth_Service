@@ -6,11 +6,13 @@ const { AuthRequestValidator } = require('../../middlewares/index');
 
 router.post('/signup',
     AuthRequestValidator.validateUserAuth,
+    AuthRequestValidator.validateEmail,
     UserController.create
 );
 
 router.post('/signin',
     AuthRequestValidator.validateUserAuth,
+    AuthRequestValidator.validateEmail,
     UserController.signIn
 );
 
