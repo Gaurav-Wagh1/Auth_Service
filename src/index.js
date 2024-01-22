@@ -4,7 +4,8 @@ const app = express();
 
 const { PORT } = require('./config/server-config');
 const apiRoutes = require('./routes/index');
-const UserService = require('./services/user-service');
+
+const db = require('./models/index');
 
 const createServer = () => {
 
@@ -12,8 +13,11 @@ const createServer = () => {
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use('/api', apiRoutes);
 
-    app.listen(PORT, async() => {
+    app.listen(PORT, async () => {
         console.log(`server listening on port ${PORT}`);
+        if (process.env.DB_SYNC) {
+            db.sequelize.sync({ alter: true });
+        }
     })
 }
 
