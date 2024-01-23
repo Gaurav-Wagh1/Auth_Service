@@ -1,4 +1,4 @@
-const UserRepository = require('../repository/user-repository');
+const { UserRepository, RoleRepository } = require('../repository/index');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { JWT_KEY } = require('../config/server-config');
@@ -7,6 +7,7 @@ const { JWT_KEY } = require('../config/server-config');
 class UserService {
     constructor() {
         this.userRepository = new UserRepository();
+        this.roleRepository = new RoleRepository();
     }
 
     async create(data) {
@@ -18,6 +19,7 @@ class UserService {
             throw error
         }
     }
+
 
     async signIn(userEmail, plainPassword) {
         // 1)  get the user from database using email;
@@ -43,6 +45,7 @@ class UserService {
         }
     }
 
+
     async isAuthenticated(token) {
         try {
             const isTokenValidated = this.#verifyToken(token);
@@ -60,6 +63,17 @@ class UserService {
             return user.id;
         } catch (error) {
             console.log("Something went wrong in authentication process;");
+            throw error;
+        }
+    }
+
+    async isAdmin(userId) {
+        try {
+            const user = await this.userRepository.getById(userId);
+            const adminRole = await this.roleRepository.getByName("ADMIN");
+            return user.hasRole(adminRole);
+        } catch (error) {
+            console.log("Something wrong in service layer!");
             throw error;
         }
     }

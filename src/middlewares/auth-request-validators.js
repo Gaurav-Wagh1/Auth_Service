@@ -25,4 +25,20 @@ const validateEmail = (req, res, next) => {
     next();
 }
 
-module.exports = { validateUserAuth, validateEmail }
+const validateIsAdmin = (req, res, next) => {
+    if (!req.body.id) {
+        return res.status(400).json({
+            data: {},
+            success: false,
+            err: "User id is not given!",
+            message: "Please enter a valid user id"
+        });
+    }
+    next();
+}
+
+module.exports = {
+    validateUserAuth,
+    validateEmail,
+    validateIsAdmin
+}
