@@ -2,7 +2,8 @@ const { UserRepository, RoleRepository } = require('../repository/index');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { JWT_KEY } = require('../config/server-config');
-
+const { StatusCodes } = require('http-status-codes');
+const ValidationError = require('../utils/validation-error');
 
 class UserService {
     constructor() {
@@ -15,6 +16,18 @@ class UserService {
             const user = await this.userRepository.create(data);
             return user;
         } catch (error) {
+            if (error.name == "SequelizeValidationError") {
+                let message = [];
+                error.errors.forEach(err => {
+                    message.push = err.message;
+                });
+                let explanation = "Please enter proper valid credentials";
+                throw new ValidationError({
+                    message,
+                    explanation,
+                    statusCode: StatusCodes.BAD_REQUEST
+                });
+            }
             console.log("Something wrong at the service layer");
             throw error
         }
@@ -66,6 +79,7 @@ class UserService {
             throw error;
         }
     }
+
 
     async isAdmin(userId) {
         try {

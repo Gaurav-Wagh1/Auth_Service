@@ -14,11 +14,13 @@ const create = async (req, res) => {
             message: "Successfully created the user"
         });
     } catch (error) {
-        return res.status(500).json({
+        console.log(error);
+        return res.status(error.statusCode).json({
             data: {},
             success: false,
-            error: error,
-            message: "something went wrong !"
+            error: error.name,
+            message: error.message,
+            description: error.explanation
         });
     }
 }
@@ -34,11 +36,20 @@ const signIn = async (req, res) => {
             message: "Successfully signed in"
         });
     } catch (error) {
+        if (error.name == "ValidationError") {
+            return res.status(error.statusCode).json({
+                data: {},
+                success: false,
+                error: error.name,
+                message: error.message,
+                description: error.explanation
+            });
+        }
         return res.status(500).json({
             data: {},
             success: false,
             error: error,
-            message: "something went wrong !"
+            message: "Something error at controller layer !"
         });
     }
 }
