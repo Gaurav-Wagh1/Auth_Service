@@ -14,7 +14,6 @@ const create = async (req, res) => {
             message: "Successfully created the user"
         });
     } catch (error) {
-        console.log(error);
         return res.status(error.statusCode).json({
             data: {},
             success: false,
@@ -94,9 +93,30 @@ const isAdmin = async (req, res) => {
 }
 
 
+const get = async(req, res) => {
+    try {
+        const response = await userService.getById(req.params.id);
+        return res.status(200).json({
+            data: response,
+            success: true,
+            error: {},
+            message: "Successful"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            data: {},
+            success: false,
+            error: error,
+            message: "Something error at controller layer !"
+        });
+    }
+}
+
+
 module.exports = {
     create,
     signIn,
     isAuthenticated,
-    isAdmin
+    isAdmin,
+    get
 }

@@ -28,6 +28,15 @@ class UserService {
                     statusCode: StatusCodes.BAD_REQUEST
                 });
             }
+            if (error.name == "SequelizeUniqueConstraintError") {
+                let explanation = "User already exists !";
+                throw new ValidationError({
+                    name:error.name,
+                    message:error.errors[0].message,
+                    explanation,
+                    statusCode: StatusCodes.BAD_REQUEST
+                });
+            }
             console.log("Something wrong at the service layer");
             throw error
         }
@@ -120,6 +129,16 @@ class UserService {
             return bcrypt.compareSync(userInputPassword, encryptedPassword);
         } catch (error) {
             console.log("Something wrong in password comparison!");
+            throw error
+        }
+    }
+
+    async getById (userId) {
+        try {
+            const response = this.userRepository.getById(userId);
+            return response;
+        } catch (error) {
+            console.log("Something wrong in fetching user!", error);
             throw error
         }
     }
